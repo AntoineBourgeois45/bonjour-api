@@ -22,12 +22,11 @@ jobs:
         run: npm ci
         working-directory: ./bonjour-api
 
-      - name: Build Next.js API
+      - name: Build Next.js app
         run: npm run build
         working-directory: ./bonjour-api
 
-      - name: Serve built app
-        shell: bash
+      - name: Start Next.js app
         run: |
           npm install -g wait-on
           npm run start &
@@ -35,7 +34,6 @@ jobs:
         working-directory: ./bonjour-api
 
       - name: API smoke test
-        shell: bash
         run: |
           response=$(curl -s http://localhost:3000/api/bonjour?prenom=CI)
           echo "Response: $response"
@@ -44,5 +42,17 @@ jobs:
             exit 1
           else
             echo "API smoke test passed!"
+          fi
+        working-directory: ./bonjour-api
+
+      - name: API should fail without prenom
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/bonjour)
+          echo "Status code: $code"
+          if [[ "$code" != "400" ]]; then
+            echo "Expected 400 when no prenom is provided, got $code"
+            exit 1
+          else
+            echo "Error case test passed!"
           fi
         working-directory: ./bonjour-api
