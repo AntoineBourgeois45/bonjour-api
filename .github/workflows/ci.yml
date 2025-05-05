@@ -29,8 +29,8 @@ jobs:
       - name: Serve built app
         shell: bash
         run: |
-          npm install -g serve wait-on
-          serve -s .next -l 3000 &
+          npm install -g wait-on
+          npm run start &
           npx wait-on http://localhost:3000/api/healthcheck
         working-directory: ./bonjour-api
 

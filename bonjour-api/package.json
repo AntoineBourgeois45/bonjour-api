@@ -11,8 +11,8 @@
     "next": "15.3.1"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19"
+    "@types/node": "^20.17.32",
+    "@types/react": "^19",
+    "typescript": "^5"
   }
 }
