@@ -6,13 +6,15 @@ Une petite API Next.js qui répond « Bonjour [Prénom] ! ».
 
 ## 🚀 Installation
 ```bash
+cd bonjour-api
 npm install
 npm run build
 npm run start
 ```
 
-⚠️ **Important** : l'application se lance par défaut sur le port 3000.
-Assure-toi que ce port est libre avant d'exécuter npm run start.
+⚠️ **Important** :
+L'application se lance par défaut sur le port 3000.
+Assurez-vous que ce port soit libre avant d'exécuter npm run start.
 
 ## 📡 Endpoints
 
