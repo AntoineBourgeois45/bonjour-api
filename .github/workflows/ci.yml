@@ -1,21 +1,42 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test-api:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Install
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./bonjour-api
+      - name: Build Next.js API
+        run: npm run build
+        working-directory: ./bonjour-api
+      - name: Serve built app
         run: |
-          cd bonjour-api
-          npm ci
-      - name: Run Tests
+          npm install -g serve
+          serve -s build -l 3000 &
+          npx wait-on http://localhost:3000/api/healthcheck
+        working-directory: ./bonjour-api
+      - name: API smoke test
         run: |
-          curl "http://localhost:3000/api/healthcheck" --fail
-          curl "http://localhost:3000/api/bonjour?prenom=Test" --fail
+          response=$(curl -s http://localhost:3000/api/bonjour?prenom=CI)
+          echo "Response: $response"
+          if [[ "$response" != *"Bonjour CI !"* ]]; then
+            echo "API smoke test failed!"
+            exit 1
+          else
+            echo "API smoke test passed!"
+          fi
+        shell: bash
+        working-directory: ./bonjour-api
