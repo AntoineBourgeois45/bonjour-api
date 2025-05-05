@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test-api:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install
+        run: |
+          cd bonjour-api
+          npm ci
+      - name: Run Tests
+        run: |
+          curl "http://localhost:3000/api/healthcheck" --fail
+          curl "http://localhost:3000/api/bonjour?prenom=Test" --fail
