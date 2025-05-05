@@ -12,23 +12,30 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: ./bonjour-api
+
       - name: Build Next.js API
         run: npm run build
         working-directory: ./bonjour-api
+
       - name: Serve built app
+        shell: bash
         run: |
-          npm install -g serve
-          serve -s build -l 3000 &
+          npm install -g serve wait-on
+          serve -s .next -l 3000 &
           npx wait-on http://localhost:3000/api/healthcheck
         working-directory: ./bonjour-api
+
       - name: API smoke test
+        shell: bash
         run: |
           response=$(curl -s http://localhost:3000/api/bonjour?prenom=CI)
           echo "Response: $response"
@@ -38,5 +45,4 @@ jobs:
           else
             echo "API smoke test passed!"
           fi
-        shell: bash
         working-directory: ./bonjour-api
